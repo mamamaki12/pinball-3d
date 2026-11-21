@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#02202e">
+<meta name="description" content="クジラの泳ぐ海。水車がボールをはじく">
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box}
+body{margin:0;font-size:14px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<title>うみのそこピンボール</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Zen+Maru+Gothic:wght@500;700&display=swap">
+<style>
+/* 画面いっぱいの台。上に得点、下にフリッパー。この台だけの色と文字で1つの世界にする */
+:root {
+  color-scheme: dark;
+  --bg: #02202e; --ink: #eafcff; --dim: #8cc4cf;
+  --accent: #ffb347; --accent2: #7dffd9; --glow: rgba(125,255,217,.55);
+  --panel: rgba(3,48,66,.85); --line: rgba(125,255,217,.35); --veil: rgba(2,32,46,.6);
+  --font-display: 'Mochiy Pop One','Zen Maru Gothic',sans-serif;
+  --font-body: 'Zen Kaku Gothic New','Zen Maru Gothic','Hiragino Sans','Yu Gothic',sans-serif;
+}
+/* THEME-UI */
+.pb-title { color: var(--ink); text-shadow: 0 3px 0 #0a7c95, 0 6px 0 #064a66, 0 10px 22px rgba(0,0,0,.4); }
+.pb-how li { --r: 18px; border-left-width: 0; padding-left: 16px; backdrop-filter: blur(6px); }
+.pb-btn { color: #064a66; background: var(--accent2); border-radius: 999px; box-shadow: 0 5px 0 #2aa58b, 0 12px 24px rgba(0,0,0,.35); }
+.pb-btn:hover { background: var(--ink); }
+/* /THEME-UI */
+</style>
+<div id="pb"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="art.js"></script>
+<script src="engine.js"></script>
+<script>
+var CFG = {"name": "うみのそこ<br>ピンボール", "sub": "くるくる回る水車をよけて、あわを割ろう", "key": "pb-umi-hi", "gravity": 14.5, "floorStyle": "bubbles", "floorWord": "うみのそこ", "floorFont": "'Mochiy Pop One', sans-serif", "seed": 23, "tip": "3つの水車がボールをはじき返します。中央の的3枚でジャックポット。右上のホールで1000点。左右の壁ぎわはアウトレーン（落ちるとボールを失う）。", "targetReward": "bonus", "colors": {"bg": "#02202e", "floorA": "#0a6f8a", "floorB": "#043a52", "floorLine": "#9af3ff", "floorText": "#eafcff", "wall": "#0b4a5e", "wallEm": "#2ad4c9", "apron": "#06394b", "cabinet": "#032633", "bumper": ["#ffb347", "#ff7fa8", "#7dffd9"], "bumperBody": "#0a5468", "flipper": "#ffb347", "sling": "#ff7fa8", "target": "#7dffd9", "targetOff": "#1c5650", "roll": "#fff6a8", "rotor": "#ffb347", "warp": "#ffffff", "warpOut": "#ffffff", "ball": "#ffffff", "ballEm": "#3ad0ff", "accent": "#ffb347", "light1": "#7dffd9", "light2": "#ff7fa8", "dust": "#9af3ff", "dmd": "#7dffd9", "dmdOff": "#0b2e2a", "bulb": "#fff6c8", "bulbOff": "#1d5560", "bgTop": "#064a5e", "bgLow": "#01121a", "trail": "#ffffff", "plateEdge": "#064a66"}, "bumpers": [{"x": -2.8, "y": 12.9, "r": 0.55, "kick": 10}, {"x": 2.0, "y": 12.9, "r": 0.55, "kick": 10}, {"x": -0.4, "y": 13.6, "r": 0.5, "kick": 10}], "rotors": [{"x": -0.4, "y": 10.6, "half": 1.5, "w": 1.5}, {"x": -2.6999999999999997, "y": 8.3, "half": 0.75, "w": -2.6}, {"x": 1.9, "y": 8.3, "half": 0.75, "w": 2.6, "a": 1.2}], "targets": [{"x": -4.72, "y": 10.6, "ang": 1.5707963267948966}, {"x": 3.92, "y": 10.6, "ang": 1.5707963267948966}, {"x": -4.72, "y": 11.8, "ang": 1.5707963267948966}, {"x": 3.92, "y": 11.8, "ang": 1.5707963267948966}, {"x": -1.3, "y": 7.1, "ang": 0, "free": true}, {"x": -0.4, "y": 7.1, "ang": 0, "free": true}, {"x": 0.5, "y": 7.1, "ang": 0, "free": true}], "rollovers": [{"x": -1.9, "y": 15.3}, {"x": -0.4, "y": 15.3}, {"x": 1.1, "y": 15.3}], "walls": [[-1.15, 14.8, -1.15, 15.9], [0.35, 14.8, 0.35, 15.9], [-2.65, 14.8, -2.65, 15.9], [1.85, 14.8, 1.85, 15.9]], "plainName": "うみのそこピンボール", "dmdName": "うみのそこ", "bloom": {"strength": 0.5, "radius": 0.5, "threshold": 0.78}, "model": "umi.model.json", "ao": "ao_umi.png", "holes": [{"x": 2.9, "y": 14.3, "vx": -5, "vy": -4}], "pegs": [{"x": -3.7, "y": 14.2}, {"x": -1.6, "y": 14.0}], "art": "umi", "home": "./"};
+function boot() { startPinball(CFG); }
+if (document.fonts && document.fonts.load) {
+  var done = false, go = function () { if (!done) { done = true; boot(); } };
+  var need = [['700 40px ' + CFG.floorFont, CFG.floorWord + CFG.plainName + 'ボールばいりつてんスタートをおしてねハイスコアゲームオーバーフィーバーおわりジャックポットホールインワープマルチボーナスセーブ0123456789×!+']].concat((window.PB_ART && PB_ART.fonts[CFG.art]) || []);
+  Promise.all(need.map(function (f) { return document.fonts.load(f[0], f[1]); })).then(go, go); setTimeout(go, 2500);
+} else boot();
+</script>
+</body>
+</html>

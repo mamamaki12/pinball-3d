@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#07051a">
+<meta name="description" content="雨あがりの夜の街。いちばん基本の台">
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box}
+body{margin:0;font-size:14px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<title>ネオン街ピンボール</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Zen+Kaku+Gothic+New:wght@500;700&display=swap">
+<style>
+/* 画面いっぱいの台。上に得点、下にフリッパー。この台だけの色と文字で1つの世界にする */
+:root {
+  color-scheme: dark;
+  --bg: #07051a; --ink: #f3efff; --dim: #9a90c8;
+  --accent: #ff3fa4; --accent2: #3ff0ff; --glow: rgba(255,63,164,.65);
+  --panel: rgba(20,12,52,.82); --line: rgba(63,240,255,.35); --veil: rgba(7,5,26,.6);
+  --font-display: 'Orbitron','Zen Kaku Gothic New',sans-serif;
+  --font-body: 'Zen Kaku Gothic New','Zen Maru Gothic','Hiragino Sans','Yu Gothic',sans-serif;
+}
+/* THEME-UI */
+.pb-title { color: transparent; -webkit-text-stroke: 1.5px var(--ink); text-shadow: 0 0 18px var(--accent), 0 0 42px var(--accent); letter-spacing: .06em; }
+.pb-sub { font-family: var(--font-display); letter-spacing: .32em; font-size: 11px; color: var(--accent2); text-shadow: 0 0 10px var(--accent2); }
+.pb-btn { border-radius: 4px; background: transparent; color: var(--accent2); border: 2px solid var(--accent2); box-shadow: 0 0 16px var(--accent2), inset 0 0 16px rgba(63,240,255,.25); letter-spacing: .2em; }
+.pb-btn:hover { background: var(--accent2); color: var(--bg); }
+.pb-how li { --r: 2px; }
+/* /THEME-UI */
+</style>
+<div id="pb"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="art.js"></script>
+<script src="engine.js"></script>
+<script>
+var CFG = {"name": "ネオン街<br>ピンボール", "sub": "NEON GAI PINBALL", "key": "pb-neon-hi", "gravity": 18.5, "floorStyle": "grid", "floorWord": "NEON", "floorFont": "Orbitron, sans-serif", "seed": 11, "tip": "中央の的3枚を全部沈めるとジャックポット。上のホールに入れると1000点。上の3つのランプでフィーバー。左右の壁ぎわはアウトレーン（落ちるとボールを失う）。", "targetReward": "bonus", "colors": {"bg": "#07051a", "floorA": "#1a0b3e", "floorB": "#0a0620", "floorLine": "#5a3df0", "floorText": "#ff3fa4", "wall": "#241452", "wallEm": "#7a3cff", "apron": "#150b36", "cabinet": "#0d0826", "bumper": ["#ff3fa4", "#3ff0ff", "#ffe14d"], "bumperBody": "#1c1340", "flipper": "#ff3fa4", "sling": "#3ff0ff", "target": "#ffe14d", "targetOff": "#4a431c", "roll": "#3ff0ff", "rotor": "#ffe14d", "warp": "#ffffff", "warpOut": "#ffffff", "ball": "#e9ecff", "ballEm": "#6a5cff", "accent": "#ff3fa4", "light1": "#ff3fa4", "light2": "#3ff0ff", "dust": "#7a3cff", "dmd": "#3ff0ff", "dmdOff": "#0a2a30", "bulb": "#ffd0ec", "bulbOff": "#4a1a3a", "bgTop": "#1a0b3e", "bgLow": "#020108", "trail": "#ff3fa4", "plateEdge": "#12062e"}, "bumpers": [{"x": -2.0, "y": 12.4, "r": 0.6}, {"x": 1.2000000000000002, "y": 12.4, "r": 0.6}, {"x": -0.4, "y": 10.3, "r": 0.6}], "targets": [{"x": -4.72, "y": 9.0, "ang": 1.5707963267948966}, {"x": 3.92, "y": 9.0, "ang": 1.5707963267948966}, {"x": -4.72, "y": 10.1, "ang": 1.5707963267948966}, {"x": 3.92, "y": 10.1, "ang": 1.5707963267948966}, {"x": -4.72, "y": 11.2, "ang": 1.5707963267948966}, {"x": 3.92, "y": 11.2, "ang": 1.5707963267948966}, {"x": -1.3, "y": 8.3, "ang": 0, "free": true}, {"x": -0.4, "y": 8.3, "ang": 0, "free": true}, {"x": 0.5, "y": 8.3, "ang": 0, "free": true}], "rollovers": [{"x": -1.9, "y": 15.3}, {"x": -0.4, "y": 15.3}, {"x": 1.1, "y": 15.3}], "walls": [[-1.15, 14.8, -1.15, 15.9], [0.35, 14.8, 0.35, 15.9], [-2.65, 14.8, -2.65, 15.9], [1.85, 14.8, 1.85, 15.9]], "plainName": "ネオン街ピンボール", "dmdName": "ネオンがい", "bloom": {"strength": 0.7, "radius": 0.6, "threshold": 0.6}, "model": "neon.model.json", "ao": "ao_neon.png", "holes": [{"x": -0.4, "y": 13.7, "vx": 0, "vy": -8}], "bars": [[-3.6, 8.3, -2.9, 7.6], [2.1, 7.6, 2.8, 8.3]], "pegs": [{"x": -3.3, "y": 13.6}, {"x": 2.5, "y": 13.6}], "art": "neon", "home": "./"};
+function boot() { startPinball(CFG); }
+if (document.fonts && document.fonts.load) {
+  var done = false, go = function () { if (!done) { done = true; boot(); } };
+  var need = [['700 40px ' + CFG.floorFont, CFG.floorWord + CFG.plainName + 'ボールばいりつてんスタートをおしてねハイスコアゲームオーバーフィーバーおわりジャックポットホールインワープマルチボーナスセーブ0123456789×!+']].concat((window.PB_ART && PB_ART.fonts[CFG.art]) || []);
+  Promise.all(need.map(function (f) { return document.fonts.load(f[0], f[1]); })).then(go, go); setTimeout(go, 2500);
+} else boot();
+</script>
+</body>
+</html>

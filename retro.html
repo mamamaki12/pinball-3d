@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#24150f">
+<meta name="description" content="昭和の商店街。ベルが鳴るなつかしの一台">
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box}
+body{margin:0;font-size:14px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<title>レトロ横丁ピンボール</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Kiwi+Maru:wght@400;500&display=swap">
+<style>
+/* 昭和の遊技場。木の台わくにクリーム色の盤面、得点は回転式の数字板 */
+:root {
+  color-scheme: dark;
+  --bg: #24150f; --ink: #f6e7c4; --dim: #c2a57c;
+  --accent: #f0a01e; --accent2: #f6d77a; --glow: rgba(240,160,30,.45);
+  --panel: rgba(58,34,20,.9); --line: rgba(246,231,196,.35); --veil: rgba(36,21,15,.6);
+  --reel: #15100c; --reel-edge: #8a6a3a;
+  --font-display: 'Dela Gothic One','Kiwi Maru',sans-serif;
+  --font-body: 'Kiwi Maru','Hiragino Maru Gothic ProN','Yu Gothic',sans-serif;
+}
+/* THEME-UI */
+.pb-score { display: flex; gap: 3px; text-shadow: none; font-size: clamp(22px, 6vw, 32px); }
+.pb-score span { background: var(--reel); color: var(--ink); border: 1px solid var(--reel-edge); border-radius: 4px; padding: 5px 6px 6px; box-shadow: inset 0 6px 6px -4px #000, inset 0 -6px 6px -4px #000; }
+.pb-title { color: #f6e7c4; background: #cf3b2a; padding: .28em .5em .34em; border: 3px solid #f6e7c4; outline: 3px solid #cf3b2a; border-radius: 6px; text-shadow: 3px 3px 0 #8f2318; letter-spacing: .04em; rotate: -2deg; font-size: clamp(28px, 9vw, 46px); }
+.pb-sub { color: var(--accent2); }
+.pb-how li { --r: 4px; border-left-color: #1f8a84; }
+.pb-btn { border-radius: 8px; border: 3px solid var(--ink); color: var(--reel); box-shadow: 0 5px 0 #8a5a12; }
+/* /THEME-UI */
+</style>
+<div id="pb"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="art.js"></script>
+<script src="engine.js"></script>
+<script>
+var CFG = {"name": "レトロ横丁<br>ピンボール", "sub": "チーンと鳴る、なつかしの一台", "key": "pb-retro-hi", "gravity": 16, "floorStyle": "retro", "floorWord": "ヨコチョウ", "floorFont": "'Dela Gothic One', sans-serif", "seed": 58, "reel": true, "bell": true, "tip": "きのこ形のバンパーが5つ。中央の的3枚でジャックポット。上のホールに入れると1000点。左右の壁ぎわはアウトレーン（落ちるとボールを失う）。", "targetReward": "bonus", "colors": {"bg": "#24150f", "floorA": "#e9d5a4", "floorB": "#dcc088", "floorLine": "#1f8a84", "floorRay": "#dba632", "floorText": "#d6402f", "wall": "#7a4322", "wallEm": "#5a2c12", "apron": "#b9422f", "cabinet": "#6b3d1e", "bumper": ["#c9321f", "#17736e", "#d98a10", "#c9321f", "#17736e"], "bumperBody": "#f3ead6", "flipper": "#d6402f", "sling": "#1f8a84", "target": "#f0a01e", "targetOff": "#8a6a3a", "roll": "#a8201a", "rotor": "#f0a01e", "warp": "#ffffff", "warpOut": "#ffffff", "ball": "#dfe3e8", "ballEm": "#55606a", "accent": "#d6402f", "light1": "#c98a4a", "light2": "#b8683a", "dust": "#f0c14b", "dmd": "#f6e7c4", "dmdBack": "#7a1f14", "glass": "#f0dfb4", "plate": "#cf3b2a", "bulb": "#fff3b8", "bulbOff": "#8a6a3a", "bgTop": "#3a2418", "bgLow": "#120a06", "trail": "#d6402f", "plateEdge": "#f3e3ba", "insert": "rgba(90,49,24,.8)"}, "bumpers": [{"x": -2.1, "y": 12.6, "r": 0.6}, {"x": 1.2999999999999998, "y": 12.6, "r": 0.6}, {"x": -0.4, "y": 10.8, "r": 0.65}, {"x": -2.6, "y": 8.7, "r": 0.45, "kick": 8, "score": 50}, {"x": 1.8000000000000003, "y": 8.7, "r": 0.45, "kick": 8, "score": 50}], "targets": [{"x": -4.72, "y": 9.6, "ang": 1.5707963267948966}, {"x": 3.92, "y": 9.6, "ang": 1.5707963267948966}, {"x": -4.72, "y": 10.7, "ang": 1.5707963267948966}, {"x": 3.92, "y": 10.7, "ang": 1.5707963267948966}, {"x": -4.72, "y": 11.8, "ang": 1.5707963267948966}, {"x": 3.92, "y": 11.8, "ang": 1.5707963267948966}, {"x": -1.3, "y": 7.6, "ang": 0, "free": true}, {"x": -0.4, "y": 7.6, "ang": 0, "free": true}, {"x": 0.5, "y": 7.6, "ang": 0, "free": true}], "rollovers": [{"x": -1.9, "y": 15.3}, {"x": -0.4, "y": 15.3}, {"x": 1.1, "y": 15.3}], "walls": [[-1.15, 14.8, -1.15, 15.9], [0.35, 14.8, 0.35, 15.9], [-2.65, 14.8, -2.65, 15.9], [1.85, 14.8, 1.85, 15.9]], "plainName": "レトロ横丁ピンボール", "dmdName": "レトロよこちょう", "dmd": false, "matte": true, "bloom": {"strength": 0.32, "radius": 0.4, "threshold": 0.86}, "model": "retro.model.json", "ao": "ao_retro.png", "holes": [{"x": -0.4, "y": 14.0, "vx": 0, "vy": -7}], "bars": [[-3.6, 13.3, -3.0, 13.9], [2.2, 13.9, 2.8, 13.3]], "pegs": [{"x": -1.4, "y": 9.2}, {"x": 0.6, "y": 9.2}], "art": "retro", "home": "./"};
+function boot() { startPinball(CFG); }
+if (document.fonts && document.fonts.load) {
+  var done = false, go = function () { if (!done) { done = true; boot(); } };
+  var need = [['700 40px ' + CFG.floorFont, CFG.floorWord + CFG.plainName + 'ボールばいりつてんスタートをおしてねハイスコアゲームオーバーフィーバーおわりジャックポットホールインワープマルチボーナスセーブ0123456789×!+']].concat((window.PB_ART && PB_ART.fonts[CFG.art]) || []);
+  Promise.all(need.map(function (f) { return document.fonts.load(f[0], f[1]); })).then(go, go); setTimeout(go, 2500);
+} else boot();
+</script>
+</body>
+</html>
